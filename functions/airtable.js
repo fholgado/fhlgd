@@ -12,6 +12,7 @@ exports.handler = function (event, context, callback) {
     .select({
       maxRecords: 100,
       view: "grid",
+      sort: [{field: "Date started", direction: "desc"}],
     })
     .eachPage(
       function page(records, fetchNextPage) {
