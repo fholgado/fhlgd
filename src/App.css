@@ -1,3 +1,23 @@
 .App {
-  text-align: center;
+  padding: 20px;
+}
+
+.logo {
+  width: 300px;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-bottom: 40px;
+}
+
+.project-image img {
+  height: 95vh;
+  margin-right: 20px;
+}
+
+.project-meta p {
+  max-width: 565px;
 }
