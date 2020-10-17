@@ -28,13 +28,11 @@ function ProjectCard({ data }) {
 }
 
 function App() {
-  const [projects, setProjects] = useState([]);
   const [projectsByYear, setProjectsByYear] = useState([]);
   useEffect(() => {
-    fetch("/.netlify/functions/airtable")
+    fetch("/.netlify/functions/get-projects")
       .then((response) => response.json())
       .then((data) => {
-        setProjects(data.records);
         // Sort Projects by year
         const projectsByYear = { unknown: [] };
         data.records.forEach((project) => {
