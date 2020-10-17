@@ -6,6 +6,12 @@
   width: 300px;
 }
 
+nav {
+  border-bottom: solid 1px #ebebeb;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
 nav a {
   margin-right: 10px;
 }
