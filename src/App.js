@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 
 function ProjectCard({ data }) {
-  console.log(data["Finished Photos"]);
   return (
     <div className="project-card">
       <div className="project-image">
@@ -30,18 +29,47 @@ function ProjectCard({ data }) {
 
 function App() {
   const [projects, setProjects] = useState([]);
+  const [projectsByYear, setProjectsByYear] = useState([]);
   useEffect(() => {
     fetch("/.netlify/functions/airtable")
       .then((response) => response.json())
-      .then((data) => setProjects(data.records));
+      .then((data) => {
+        setProjects(data.records);
+        // Sort Projects by year
+        const projectsByYear = { unknown: [] };
+        data.records.forEach((project) => {
+          const projectYear = project.fields["Date started"]
+            ? new Date(project.fields["Date started"]).getFullYear()
+            : project.fields["Date Completed"]
+            ? new Date(project.fields["Date Completed"]).getFullYear()
+            : null;
+          if (projectYear === null) {
+            projectsByYear.unknown.push(project);
+          } else {
+            if (!projectsByYear[projectYear]) {
+              projectsByYear[projectYear] = [];
+            }
+            projectsByYear[projectYear].push(project);
+          }
+        });
+        setProjectsByYear(projectsByYear);
+      });
   }, []);
+
   return (
     <div className="App">
       <header className="App-header">
         <img alt="logo" src="logo.png" className="logo" />
       </header>
-      {projects.map((project) => {
-        return <ProjectCard data={project.fields} />;
+      {Object.keys(projectsByYear).map((projectYear) => {
+        return (
+          <div class="project-year-container">
+            <h2>{projectYear}</h2>
+            {projectsByYear[projectYear].map((project) => {
+              return <ProjectCard data={project.fields} />;
+            })}
+          </div>
+        );
       })}
     </div>
   );
