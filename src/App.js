@@ -96,13 +96,29 @@ function Project({ projects, projectId }) {
         {data["Finished Photos"] &&
           data["Finished Photos"].map((finishedPhoto) => {
             return (
-              <img alt="project" src={finishedPhoto.thumbnails.large.url} />
+              <img
+                alt="project"
+                key={finishedPhoto.id}
+                src={
+                  finishedPhoto.thumbnails
+                    ? finishedPhoto.thumbnails.large.url
+                    : finishedPhoto.url
+                }
+              />
             );
           })}
         {data["In Progress Photos"] &&
           data["In Progress Photos"].map((progressPhoto) => {
             return (
-              <img alt="project" src={progressPhoto.thumbnails.large.url} />
+              <img
+                alt="project"
+                key={progressPhoto.id}
+                src={
+                  progressPhoto.thumbnails
+                    ? progressPhoto.thumbnails.large.url
+                    : progressPhoto.url
+                }
+              />
             );
           })}
       </div>
