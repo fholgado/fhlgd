@@ -1,7 +1,30 @@
 import React, { useEffect, useState } from "react";
+import { Router, Link } from "@reach/router";
 import "./App.css";
 
-function ProjectCard({ data }) {
+function Nav({ projectsByYear }) {
+  return (
+    <React.Fragment>
+      <header className="App-header">
+        <a href="/" alt="fholgado">
+          <img alt="logo" src="/logo.png" className="logo" />
+        </a>
+      </header>
+      <nav>
+        {Object.keys(projectsByYear).map((projectYear) => {
+          return (
+            <Link key={projectYear} to={`/year/${projectYear}`}>
+              {projectYear}
+            </Link>
+          );
+        })}
+      </nav>
+    </React.Fragment>
+  );
+}
+
+function ProjectCard({ project }) {
+  const data = project.fields;
   return (
     <div className="project-card">
       <div className="project-image">
@@ -19,7 +42,75 @@ function ProjectCard({ data }) {
       </div>
       <div className="project-meta">
         <h3>
-          {data.Name} ({data["Date started"]})
+          <Link to={`/project/${project.id}`}>
+            {data.Name} ({data["Date started"]})
+          </Link>
+        </h3>
+        <p>{data.Description}</p>
+      </div>
+    </div>
+  );
+}
+
+function Home({ projectsByYear }) {
+  return (
+    <div>
+      {Object.keys(projectsByYear).map((projectYear) => {
+        return (
+          <div
+            key={`projectYear-${projectYear}`}
+            className="project-year-container"
+          >
+            <h2>{projectYear}</h2>
+            {projectsByYear[projectYear].map((project) => {
+              return <ProjectCard key={project.id} project={project} />;
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function ProjectsByYear({ projectsByYear, projectYear }) {
+  if (!projectsByYear[projectYear]) return "Loading...";
+  return (
+    <div class="project-year-container">
+      <h2>{projectYear}</h2>
+      {projectsByYear[projectYear].map((project) => {
+        return <ProjectCard key={project.id} project={project} />;
+      })}
+    </div>
+  );
+}
+
+function Project({ projects, projectId }) {
+  if (!projects.length) return "Loading...";
+  const project = projects.find((projectToFilter) => {
+    return projectToFilter.id === projectId;
+  });
+  const data = project.fields;
+  return (
+    <div className="project-page">
+      <div className="project-images">
+        {data["Finished Photos"] &&
+          data["Finished Photos"].map((finishedPhoto) => {
+            return (
+              <img alt="project" src={finishedPhoto.thumbnails.large.url} />
+            );
+          })}
+        {data["In Progress Photos"] &&
+          data["In Progress Photos"].map((progressPhoto) => {
+            return (
+              <img alt="project" src={progressPhoto.thumbnails.large.url} />
+            );
+          })}
+      </div>
+      <div className="project-meta">
+        <h3>
+          <Link to={`/project/${project.id}`}>
+            {data.Name} ({data["Date started"]})
+          </Link>
         </h3>
         <p>{data.Description}</p>
       </div>
@@ -28,11 +119,13 @@ function ProjectCard({ data }) {
 }
 
 function App() {
+  const [projects, setProjects] = useState([]);
   const [projectsByYear, setProjectsByYear] = useState([]);
   useEffect(() => {
     fetch("/.netlify/functions/get-projects")
       .then((response) => response.json())
       .then((data) => {
+        setProjects(data.records);
         // Sort Projects by year
         const projectsByYear = { unknown: [] };
         data.records.forEach((project) => {
@@ -56,19 +149,17 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img alt="logo" src="logo.png" className="logo" />
-      </header>
-      {Object.keys(projectsByYear).map((projectYear) => {
-        return (
-          <div class="project-year-container">
-            <h2>{projectYear}</h2>
-            {projectsByYear[projectYear].map((project) => {
-              return <ProjectCard data={project.fields} />;
-            })}
-          </div>
-        );
-      })}
+      <Nav projectsByYear={projectsByYear} />
+      <main>
+        <Router>
+          <Home path="/" projectsByYear={projectsByYear} />
+          <ProjectsByYear
+            path="/year/:projectYear"
+            projectsByYear={projectsByYear}
+          />
+          <Project path="/project/:projectId" projects={projects} />
+        </Router>
+      </main>
     </div>
   );
 }
