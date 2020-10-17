@@ -52,22 +52,15 @@ function ProjectCard({ project }) {
   );
 }
 
-function Home({ projectsByYear }) {
+function Home({ projects }) {
   return (
     <div>
-      {Object.keys(projectsByYear).map((projectYear) => {
-        return (
-          <div
-            key={`projectYear-${projectYear}`}
-            className="project-year-container"
-          >
-            <h2>{projectYear}</h2>
-            {projectsByYear[projectYear].map((project) => {
-              return <ProjectCard key={project.id} project={project} />;
-            })}
-          </div>
-        );
-      })}
+      <h2>Favorite Projects</h2>
+      {projects
+        .filter((project) => project.fields["Favorite"])
+        .map((project) => {
+          return <ProjectCard key={project.id} project={project} />;
+        })}
     </div>
   );
 }
@@ -168,7 +161,7 @@ function App() {
       <Nav projectsByYear={projectsByYear} />
       <main>
         <Router>
-          <Home path="/" projectsByYear={projectsByYear} />
+          <Home path="/" projects={projects} />
           <ProjectsByYear
             path="/year/:projectYear"
             projectsByYear={projectsByYear}
