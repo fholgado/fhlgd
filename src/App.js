@@ -89,7 +89,6 @@ function Project({ projects, projectId }) {
     return projectToFilter.id === projectId;
   });
   const data = project.fields;
-  console.log(data);
   return (
     <div className="project-page">
       <h2>{data.Name}</h2>
@@ -134,9 +133,12 @@ function Project({ projects, projectId }) {
           <p>
             <strong>Materials:</strong> {data["Wood Species"].join(", ")}
           </p>
-          <p>
-            <strong>Features and joinery:</strong> {data["Features"].join(", ")}
-          </p>
+          {data["Features"] && (
+            <p>
+              <strong>Features and joinery:</strong>{" "}
+              {data["Features"].join(", ")}
+            </p>
+          )}
         </div>
       </div>
     </div>
