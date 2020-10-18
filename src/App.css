@@ -28,10 +28,15 @@ nav a {
   margin-right: 20px;
 }
 
-.project-page {
+.project-page-container {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+}
+
+.date {
+  font-size: 0.9em;
+  color: gray;
 }
 
 .project-images {

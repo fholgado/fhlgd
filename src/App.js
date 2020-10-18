@@ -33,17 +33,23 @@ function ProjectCard({ project }) {
             alt="project"
             src={data["Finished Photos"][0].thumbnails.large.url}
           />
-        ) : data["Progress Photos"] > 0 ? (
+        ) : data["In Progress Photos"] ? (
           <img
             alt="Project"
-            src={data["Progress Photos"][0].thumbnails.large.url}
+            src={
+              data["In Progress Photos"][data["In Progress Photos"].length - 1]
+                .thumbnails.large.url
+            }
           />
         ) : null}
       </div>
       <div className="project-meta">
         <h3>
           <Link to={`/project/${project.id}`}>
-            {data.Name} ({data["Date started"]})
+            {data.Name}{" "}
+            {data["Date Completed"]
+              ? `(${data["Date started"]})`
+              : "(In Progress)"}
           </Link>
         </h3>
         <p>{data.Description}</p>
@@ -83,45 +89,55 @@ function Project({ projects, projectId }) {
     return projectToFilter.id === projectId;
   });
   const data = project.fields;
+  console.log(data);
   return (
     <div className="project-page">
-      <div className="project-images">
-        {data["Finished Photos"] &&
-          data["Finished Photos"].map((finishedPhoto) => {
-            return (
-              <img
-                alt="project"
-                key={finishedPhoto.id}
-                src={
-                  finishedPhoto.thumbnails
-                    ? finishedPhoto.thumbnails.large.url
-                    : finishedPhoto.url
-                }
-              />
-            );
-          })}
-        {data["In Progress Photos"] &&
-          data["In Progress Photos"].map((progressPhoto) => {
-            return (
-              <img
-                alt="project"
-                key={progressPhoto.id}
-                src={
-                  progressPhoto.thumbnails
-                    ? progressPhoto.thumbnails.large.url
-                    : progressPhoto.url
-                }
-              />
-            );
-          })}
-      </div>
-      <div className="project-meta">
-        <h3>
-          <Link to={`/project/${project.id}`}>
-            {data.Name} ({data["Date started"]})
-          </Link>
-        </h3>
-        <p>{data.Description}</p>
+      <h2>{data.Name}</h2>
+      <p className="date">
+        <strong>Started</strong> {data["Date started"]},{" "}
+        <strong>completed</strong> {data["Date Completed"]}
+      </p>
+      <div className="project-page-container">
+        <div className="project-images">
+          {data["Finished Photos"] && (
+            <React.Fragment>
+              <h3>Finished Photos</h3>
+              {data["Finished Photos"].map((finishedPhoto) => {
+                return (
+                  <img
+                    alt="project"
+                    key={finishedPhoto.id}
+                    src={finishedPhoto.url}
+                  />
+                );
+              })}
+            </React.Fragment>
+          )}
+          {data["In Progress Photos"] && (
+            <React.Fragment>
+              <h3>Progress Photos</h3>
+              {data["In Progress Photos"].map((progressPhoto) => {
+                return (
+                  <img
+                    alt="project"
+                    key={progressPhoto.id}
+                    src={progressPhoto.url}
+                  />
+                );
+              })}
+            </React.Fragment>
+          )}
+        </div>
+        <div className="project-meta">
+          <h3>Details</h3>
+          <p>{data.Description}</p>
+          <p>
+            <strong>Materials:</strong> {data["Wood Species"].join(", ")}
+          </p>
+          <p>
+            <strong>Features and joinery:</strong> {data["Features"].join(", ")}
+          </p>
+        </div>
       </div>
     </div>
   );
