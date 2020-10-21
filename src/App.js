@@ -83,11 +83,35 @@ function ProjectsByYear({ projectsByYear, projectYear }) {
   );
 }
 
-function Project({ projects, projectId }) {
+function ProjectWorkLog({ data }) {
+  return (
+    <div className="project-work-log">
+      <p>
+        <strong>Date:</strong> {data.Date}
+      </p>
+      <p>
+        <strong>Description:</strong> {data.Description}
+      </p>
+      {data["Attachments"].map((workLogPhoto) => {
+        return (
+          <img alt="project" key={workLogPhoto.id} src={workLogPhoto.url} />
+        );
+      })}
+    </div>
+  );
+}
+
+function Project({ projects, projectId, workLogs }) {
   if (!projects.length) return "Loading...";
   const project = projects.find((projectToFilter) => {
     return projectToFilter.id === projectId;
   });
+  const projectWorkLogs = workLogs.filter((workLog) => {
+    return (
+      workLog.fields["Table 1"] && workLog.fields["Table 1"][0] === projectId
+    );
+  });
+
   const data = project.fields;
   return (
     <div className="project-page">
@@ -112,6 +136,10 @@ function Project({ projects, projectId }) {
               })}
             </React.Fragment>
           )}
+          <h3>Work log</h3>
+          {projectWorkLogs.map(({ fields: data }) => {
+            return <ProjectWorkLog data={data} />;
+          })}
           {data["In Progress Photos"] && (
             <React.Fragment>
               <h3>Progress Photos</h3>
@@ -147,9 +175,10 @@ function Project({ projects, projectId }) {
 
 function App() {
   const [projects, setProjects] = useState([]);
+  const [workLogs, setWorkLogs] = useState([]);
   const [projectsByYear, setProjectsByYear] = useState([]);
   useEffect(() => {
-    fetch("/.netlify/functions/get-projects")
+    fetch("/.netlify/functions/get-data?type=all_projects")
       .then((response) => response.json())
       .then((data) => {
         setProjects(data.records);
@@ -172,6 +201,11 @@ function App() {
         });
         setProjectsByYear(projectsByYear);
       });
+    fetch("/.netlify/functions/get-data?type=all_work_logs")
+      .then((response) => response.json())
+      .then((data) => {
+        setWorkLogs(data.records);
+      });
   }, []);
 
   return (
@@ -184,7 +218,11 @@ function App() {
             path="/year/:projectYear"
             projectsByYear={projectsByYear}
           />
-          <Project path="/project/:projectId" projects={projects} />
+          <Project
+            path="/project/:projectId"
+            projects={projects}
+            workLogs={workLogs}
+          />
         </Router>
       </main>
     </div>
