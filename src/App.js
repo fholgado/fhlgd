@@ -138,7 +138,6 @@ function Project({ projects, projectId, workLogs }) {
           )}
           <h3>Work log</h3>
           {projectWorkLogs.map((data) => {
-            console.log(data);
             return <ProjectWorkLog key={data.id} data={data.fields} />;
           })}
           {data["In Progress Photos"] && (
