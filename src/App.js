@@ -74,7 +74,7 @@ function Home({ projects }) {
 function ProjectsByYear({ projectsByYear, projectYear }) {
   if (!projectsByYear[projectYear]) return "Loading...";
   return (
-    <div class="project-year-container">
+    <div className="project-year-container">
       <h2>{projectYear}</h2>
       {projectsByYear[projectYear].map((project) => {
         return <ProjectCard key={project.id} project={project} />;
@@ -137,8 +137,9 @@ function Project({ projects, projectId, workLogs }) {
             </React.Fragment>
           )}
           <h3>Work log</h3>
-          {projectWorkLogs.map(({ fields: data }) => {
-            return <ProjectWorkLog data={data} />;
+          {projectWorkLogs.map((data) => {
+            console.log(data);
+            return <ProjectWorkLog key={data.id} data={data.fields} />;
           })}
           {data["In Progress Photos"] && (
             <React.Fragment>
