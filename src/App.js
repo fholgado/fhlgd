@@ -2,6 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Router, Link } from "@reach/router";
 import "./App.css";
 
+function formatDate(dateString, withTime) {
+  const dateData = new Date(dateString);
+  const dateFormat = {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  };
+  if (withTime) {
+    dateFormat.hour = "2-digit";
+    dateFormat.minute = "2-digit";
+  }
+  return `${dateData.toLocaleString("default", dateFormat)} `;
+}
+
 function Nav({ projectsByYear }) {
   return (
     <React.Fragment>
@@ -48,7 +62,7 @@ function ProjectCard({ project }) {
           <Link to={`/project/${project.id}`}>
             {data.Name}{" "}
             {data["Date Completed"]
-              ? `(${data["Date started"]})`
+              ? `(${formatDate(data["Date started"])})`
               : "(In Progress)"}
           </Link>
         </h3>
@@ -87,7 +101,7 @@ function ProjectWorkLog({ data }) {
   return (
     <div className="project-work-log">
       <p>
-        <strong>Date:</strong> {data.Date}
+        <strong>Date:</strong> {formatDate(data.Date, true)}
       </p>
       <p>
         <strong>Description:</strong> {data.Description}
@@ -117,8 +131,12 @@ function Project({ projects, projectId, workLogs }) {
     <div className="project-page">
       <h2>{data.Name}</h2>
       <p className="date">
-        <strong>Started</strong> {data["Date started"]},{" "}
-        <strong>completed</strong> {data["Date Completed"]}
+        <strong>Started</strong> {formatDate(data["Date started"])}
+        {data["Date Completed"] && (
+          <React.Fragment>
+            , <strong>Completed</strong> {formatDate(data["Date Completed"])}
+          </React.Fragment>
+        )}
       </p>
       <div className="project-page-container">
         <div className="project-images">
