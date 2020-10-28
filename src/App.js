@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Router, Link } from "@reach/router";
+import { COLUMNS, TABLES } from "./data";
 import "./App.css";
 
 function formatDate(dateString, withTime) {
@@ -42,17 +43,18 @@ function ProjectCard({ project }) {
   return (
     <div className="project-card">
       <div className="project-image">
-        {data["Finished Photos"] ? (
+        {data[COLUMNS.PROJECTS.FINISHED_PHOTOS] ? (
           <img
             alt="project"
-            src={data["Finished Photos"][0].thumbnails.large.url}
+            src={data[COLUMNS.PROJECTS.FINISHED_PHOTOS][0].thumbnails.large.url}
           />
-        ) : data["In Progress Photos"] ? (
+        ) : data[COLUMNS.PROJECTS.PROGRESS_PHOTOS] ? (
           <img
             alt="Project"
             src={
-              data["In Progress Photos"][data["In Progress Photos"].length - 1]
-                .thumbnails.large.url
+              data[COLUMNS.PROJECTS.PROGRESS_PHOTOS][
+                data[COLUMNS.PROJECTS.PROGRESS_PHOTOS].length - 1
+              ].thumbnails.large.url
             }
           />
         ) : null}
@@ -61,8 +63,8 @@ function ProjectCard({ project }) {
         <h3>
           <Link to={`/project/${project.id}`}>
             {data.Name}{" "}
-            {data["Date Completed"]
-              ? `(${formatDate(data["Date started"])})`
+            {data[COLUMNS.PROJECTS.DATE_COMPLETED]
+              ? `(${formatDate(data[COLUMNS.PROJECTS.DATE_STARTED])})`
               : "(In Progress)"}
           </Link>
         </h3>
@@ -106,7 +108,7 @@ function ProjectWorkLog({ data }) {
       <p>
         <strong>Description:</strong> {data.Description}
       </p>
-      {data["Attachments"].map((workLogPhoto) => {
+      {data[COLUMNS.WORK_LOGS.ATTACHMENTS].map((workLogPhoto) => {
         return (
           <img alt="project" key={workLogPhoto.id} src={workLogPhoto.url} />
         );
@@ -131,19 +133,21 @@ function Project({ projects, projectId, workLogs }) {
     <div className="project-page">
       <h2>{data.Name}</h2>
       <p className="date">
-        <strong>Started</strong> {formatDate(data["Date started"])}
-        {data["Date Completed"] && (
+        <strong>Started</strong>{" "}
+        {formatDate(data[COLUMNS.PROJECTS.DATE_STARTED])}
+        {data[COLUMNS.PROJECTS.DATE_COMPLETED] && (
           <React.Fragment>
-            , <strong>Completed</strong> {formatDate(data["Date Completed"])}
+            , <strong>Completed</strong>{" "}
+            {formatDate(data[COLUMNS.PROJECTS.DATE_COMPLETED])}
           </React.Fragment>
         )}
       </p>
       <div className="project-page-container">
         <div className="project-images">
-          {data["Finished Photos"] && (
+          {data[COLUMNS.PROJECTS.FINISHED_PHOTOS] && (
             <React.Fragment>
               <h3>Finished Photos</h3>
-              {data["Finished Photos"].map((finishedPhoto) => {
+              {data[COLUMNS.PROJECTS.FINISHED_PHOTOS].map((finishedPhoto) => {
                 return (
                   <img
                     alt="project"
@@ -158,10 +162,10 @@ function Project({ projects, projectId, workLogs }) {
           {projectWorkLogs.map((data) => {
             return <ProjectWorkLog key={data.id} data={data.fields} />;
           })}
-          {data["In Progress Photos"] && (
+          {data[COLUMNS.PROJECTS.PROGRESS_PHOTOS] && (
             <React.Fragment>
               <h3>Progress Photos</h3>
-              {data["In Progress Photos"].map((progressPhoto) => {
+              {data[COLUMNS.PROJECTS.PROGRESS_PHOTOS].map((progressPhoto) => {
                 return (
                   <img
                     alt="project"
@@ -175,14 +179,15 @@ function Project({ projects, projectId, workLogs }) {
         </div>
         <div className="project-meta">
           <h3>Details</h3>
-          <p>{data.Description}</p>
+          <p>{data[COLUMNS.WORK_LOGS.DESCRIPTION]}</p>
           <p>
-            <strong>Materials:</strong> {data["Wood Species"].join(", ")}
+            <strong>Materials:</strong>{" "}
+            {data[COLUMNS.PROJECTS.MATERIALS].join(", ")}
           </p>
-          {data["Features"] && (
+          {data[COLUMNS.PROJECTS.FEATURES] && (
             <p>
               <strong>Features and joinery:</strong>{" "}
-              {data["Features"].join(", ")}
+              {data[COLUMNS.PROJECTS.FEATURES].join(", ")}
             </p>
           )}
         </div>
@@ -203,10 +208,10 @@ function App() {
         // Sort Projects by year
         const projectsByYear = { unknown: [] };
         data.records.forEach((project) => {
-          const projectYear = project.fields["Date started"]
-            ? new Date(project.fields["Date started"]).getFullYear()
-            : project.fields["Date Completed"]
-            ? new Date(project.fields["Date Completed"]).getFullYear()
+          const projectYear = project.fields[COLUMNS.PROJECTS.DATE_STARTED]
+            ? new Date(project.fields[COLUMNS.PROJECTS.DATE_STARTED]).getFullYear()
+            : project.fields[COLUMNS.PROJECTS.DATE_COMPLETED]
+            ? new Date(project.fields[COLUMNS.PROJECTS.DATE_COMPLETED]).getFullYear()
             : null;
           if (projectYear === null) {
             projectsByYear.unknown.push(project);
