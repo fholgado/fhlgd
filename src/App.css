@@ -28,9 +28,26 @@ nav a {
   margin-right: 20px;
 }
 
-.work-log-image {
-  width: 50vw;
+.project-work-log {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.project-work-log > div {
+  width: 48vw;
   margin-right: 20px;
+}
+
+.project-work-log .sticky-content {
+  position: sticky;
+  top: 0px;
+  align-self: flex-start;
+}
+
+.work-log-image {
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .project-page-container {

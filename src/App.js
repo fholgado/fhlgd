@@ -125,23 +125,27 @@ function ProjectWorkLogDetail({ workLogId, projects, workLogs }) {
   }).fields;
   return (
     <div className="project-work-log">
-      <h2>{data[COLUMNS.WORK_LOGS.TITLE]}</h2>
-      <p>
-        <strong>Date:</strong> {formatDate(data.Date, true)}
-      </p>
-      <p>
-        <strong>Description:</strong> {data.Description}
-      </p>
-      {data[COLUMNS.WORK_LOGS.ATTACHMENTS].map((workLogPhoto) => {
-        return (
-          <img
-            className="work-log-image"
-            alt="project"
-            key={workLogPhoto.id}
-            src={workLogPhoto.url}
-          />
-        );
-      })}
+      <div className="sticky-content">
+        <h2>{data[COLUMNS.WORK_LOGS.TITLE]}</h2>
+        <p>
+          <strong>Date:</strong> {formatDate(data.Date, true)}
+        </p>
+        <p>
+          <strong>Description:</strong> {data.Description}
+        </p>
+      </div>
+      <div>
+        {data[COLUMNS.WORK_LOGS.ATTACHMENTS].map((workLogPhoto) => {
+          return (
+            <img
+              className="work-log-image"
+              alt="project"
+              key={workLogPhoto.id}
+              src={workLogPhoto.url}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
