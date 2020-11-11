@@ -11,6 +11,7 @@ const COLUMNS = {
     ATTACHMENTS: "Attachments",
     DATE: "Date",
     DESCRIPTION: "Description",
+    TITLE: "Title",
   },
 };
 

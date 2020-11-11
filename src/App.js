@@ -99,9 +99,33 @@ function ProjectsByYear({ projectsByYear, projectYear }) {
   );
 }
 
-function ProjectWorkLog({ data }) {
+function ProjectWorkLogSummary({ data, id }) {
+  return (
+    <div className="project-work-log-summary">
+      <p>
+        <Link to={`/work-log/${id}`}>
+          <strong>{data[COLUMNS.WORK_LOGS.TITLE] || "TITLE"}</strong>{" "}
+          {formatDate(data.Date, true)}
+        </Link>
+      </p>
+      <p>
+        {data[COLUMNS.WORK_LOGS.ATTACHMENTS]
+          ? data[COLUMNS.WORK_LOGS.ATTACHMENTS].length
+          : "No"}{" "}
+        images
+      </p>
+    </div>
+  );
+}
+
+function ProjectWorkLogDetail({ workLogId, projects, workLogs }) {
+  if (!workLogs.length) return "Loading...";
+  const data = workLogs.find((workLogToFilter) => {
+    return workLogToFilter.id === workLogId;
+  }).fields;
   return (
     <div className="project-work-log">
+      <h2>{data[COLUMNS.WORK_LOGS.TITLE]}</h2>
       <p>
         <strong>Date:</strong> {formatDate(data.Date, true)}
       </p>
@@ -110,7 +134,12 @@ function ProjectWorkLog({ data }) {
       </p>
       {data[COLUMNS.WORK_LOGS.ATTACHMENTS].map((workLogPhoto) => {
         return (
-          <img alt="project" key={workLogPhoto.id} src={workLogPhoto.url} />
+          <img
+            className="work-log-image"
+            alt="project"
+            key={workLogPhoto.id}
+            src={workLogPhoto.url}
+          />
         );
       })}
     </div>
@@ -160,7 +189,13 @@ function Project({ projects, projectId, workLogs }) {
           )}
           <h3>Work log</h3>
           {projectWorkLogs.map((data) => {
-            return <ProjectWorkLog key={data.id} data={data.fields} />;
+            return (
+              <ProjectWorkLogSummary
+                key={data.id}
+                id={data.id}
+                data={data.fields}
+              />
+            );
           })}
           {data[COLUMNS.PROJECTS.PROGRESS_PHOTOS] && (
             <React.Fragment>
@@ -209,9 +244,13 @@ function App() {
         const projectsByYear = { unknown: [] };
         data.records.forEach((project) => {
           const projectYear = project.fields[COLUMNS.PROJECTS.DATE_STARTED]
-            ? new Date(project.fields[COLUMNS.PROJECTS.DATE_STARTED]).getFullYear()
+            ? new Date(
+                project.fields[COLUMNS.PROJECTS.DATE_STARTED]
+              ).getFullYear()
             : project.fields[COLUMNS.PROJECTS.DATE_COMPLETED]
-            ? new Date(project.fields[COLUMNS.PROJECTS.DATE_COMPLETED]).getFullYear()
+            ? new Date(
+                project.fields[COLUMNS.PROJECTS.DATE_COMPLETED]
+              ).getFullYear()
             : null;
           if (projectYear === null) {
             projectsByYear.unknown.push(project);
@@ -243,6 +282,11 @@ function App() {
           />
           <Project
             path="/project/:projectId"
+            projects={projects}
+            workLogs={workLogs}
+          />
+          <ProjectWorkLogDetail
+            path="/work-log/:workLogId"
             projects={projects}
             workLogs={workLogs}
           />
