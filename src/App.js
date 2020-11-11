@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Router, Link } from "@reach/router";
-import { COLUMNS, TABLES } from "./data";
+import { COLUMNS } from "./data";
 import "./App.css";
 
 function formatDate(dateString, withTime) {
